@@ -1,0 +1,55 @@
+# Farm Products E-Commerce Database
+
+This project is a relational database schema designed to support a small-scale farm products e-commerce platform. It enables farmers and buyers to interact through a structured system that manages users, products, orders, inventory, payments, and shipping. The schema is tailored to rural contexts, especially in Nandi County, Kenya, where digital tools can enhance agricultural trade and logistics.
+
+---
+
+## Project Overview
+
+The **Farm Products E-Commerce Database** is part of a capstone project integrating agriculture and technology. It reflects real-world needs in livestock and crop sales, customer management, and logistics. The database is built using SQL and visualized through an ERD diagram generated in DBeaver.
+
+---
+
+## Database Schema
+
+The schema includes 10 interconnected tables:
+
+| Table Name   | Description                                                 |
+| ------------ | ----------------------------------------------------------- |
+| `roles`      | Defines user roles (e.g., farmer, buyer, admin)             |
+| `users`      | Stores user information and links to roles                  |
+| `categories` | Organizes products into categories (e.g., livestock, crops) |
+| `products`   | Contains product listings with category and seller info     |
+| `inventory`  | Tracks stock levels and last update dates                   |
+| `orders`     | Records customer orders                                     |
+| `orderitems` | Itemized breakdown of each order                            |
+| `payments`   | Logs payment details and status                             |
+| `shipping`   | Manages delivery logistics                                  |
+| `reviews`    | Captures customer feedback on products                      |
+
+Each table is linked via foreign keys to ensure data integrity and relational structure.
+
+---
+
+## Purpose
+
+This database is designed to support rural farmers in digitizing their product sales and logistics. It reflects practical needs such as:
+
+- Managing livestock and crop listings
+- Tracking inventory and order fulfillment
+- Handling payments and shipping
+- Collecting customer feedback
+
+The schema is scalable and adaptable to local languages, mobile platforms, and future integration with educational or financial tools.
+
+---
+
+## Author
+
+## ian
+
+Location: Kapsabet, Nandi County, Kenya  
+Capstone Project – ART Program  
+Date: September 2025
+
+---
