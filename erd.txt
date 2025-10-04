@@ -1,0 +1,150 @@
+FarmConnect Kenya - Entity Relationship Diagram
+================================================
+
+USERS Collection
+├── _id (Primary Key)
+├── firstName
+├── lastName
+├── email (Unique)
+├── phone (Unique)
+├── password (Hashed)
+├── role (farmer|buyer|admin)
+├── isApproved (Boolean)
+├── location (JSON: county, subCounty, ward)
+├── profileImage
+├── isActive
+├── lastLogin
+├── resetPasswordToken
+├── resetPasswordExpires
+├── createdAt
+└── updatedAt
+
+PRODUCTS Collection
+├── _id (Primary Key)
+├── name
+├── description
+├── category (livestock|poultry|dairy|vegetables|fruits|cereals|legumes|herbs|seeds|other)
+├── subcategory
+├── price
+├── unit (kg|piece|dozen|litre|bag|bunch|head|other)
+├── quantity
+├── images (Array of URLs)
+├── farmer (Foreign Key → USERS._id)
+├── location (JSON: county, subCounty, ward)
+├── isAvailable
+├── isApproved
+├── approvedBy (Foreign Key → USERS._id)
+├── approvedAt
+├── tags (Array of strings)
+├── specifications (JSON: flexible object)
+├── rating (JSON: average, count)
+├── views
+├── isActive
+├── createdAt
+└── updatedAt
+
+ORDERS Collection
+├── _id (Primary Key)
+├── orderNumber (Unique)
+├── buyer (Foreign Key → USERS._id)
+├── items (Array of JSON: product, quantity, price, farmer)
+├── totalAmount
+├── status (pending|confirmed|processing|shipped|delivered|cancelled)
+├── paymentStatus (pending|paid|failed|refunded)
+├── paymentMethod (mpesa|cash|bank_transfer|other)
+├── paymentReference
+├── shippingAddress (JSON: county, subCounty, ward, specificLocation, contactPhone, additionalNotes)
+├── deliveryDate
+├── deliveryNotes
+├── farmerNotes
+├── isActive
+├── createdAt
+└── updatedAt
+
+REVIEWS Collection
+├── _id (Primary Key)
+├── product (Foreign Key → PRODUCTS._id)
+├── buyer (Foreign Key → USERS._id)
+├── order (Foreign Key → ORDERS._id)
+├── rating (1-5)
+├── comment
+├── isVerified
+├── isActive
+├── createdAt
+└── updatedAt
+
+Relationships:
+==============
+
+USERS (1) ──── (Many) PRODUCTS
+- One farmer can have many products
+- Products reference farmer by _id
+
+USERS (1) ──── (Many) ORDERS
+- One buyer can have many orders
+- Orders reference buyer by _id
+
+PRODUCTS (1) ──── (Many) REVIEWS
+- One product can have many reviews
+- Reviews reference product by _id
+
+USERS (1) ──── (Many) REVIEWS
+- One buyer can write many reviews
+- Reviews reference buyer by _id
+
+ORDERS (1) ──── (Many) REVIEWS
+- One order can have multiple reviews (one per product)
+- Reviews reference order by _id
+
+ORDERS (Many) ──── (Many) PRODUCTS
+- Many-to-many relationship through items array
+- Each order item contains product reference, quantity, price, and farmer
+
+Indexes for Performance:
+=======================
+
+USERS:
+- email (unique)
+- phone (unique)
+- role
+- isApproved
+- location.county
+
+PRODUCTS:
+- name (text search)
+- category
+- farmer
+- isApproved
+- isAvailable
+- price
+- rating.average
+- location.county
+- location.subCounty
+- Text index on: name, description, category, subcategory, tags
+
+ORDERS:
+- buyer
+- status
+- paymentStatus
+- createdAt
+- orderNumber (unique)
+
+REVIEWS:
+- product
+- buyer
+- rating
+- Unique compound index: (product, buyer)
+
+Key Features:
+=============
+
+1. **Scalable Design**: MongoDB collections with proper indexing
+2. **Flexible Schema**: JSON fields for location and specifications
+3. **Text Search**: Full-text search on products
+4. **Location-based**: County/Sub-county/Ward hierarchy
+5. **Role-based Access**: Farmers, Buyers, Admins
+6. **Approval Workflow**: Products and farmers require approval
+7. **Order Management**: Complete order lifecycle
+8. **Review System**: Product ratings and reviews
+9. **Mobile Optimized**: Designed for rural connectivity
+10. **Security**: Password hashing, JWT tokens, input validation
