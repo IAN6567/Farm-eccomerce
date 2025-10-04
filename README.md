@@ -442,3 +442,4 @@ For support and questions:
 ---
 
 **FarmConnect Kenya** - Empowering rural communities through technology 🌾📱
+# farme-e-commerce-platform
