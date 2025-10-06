@@ -15,18 +15,13 @@ app.use((req, res, next) => {
     "Content-Security-Policy",
     [
       "default-src 'self'",
-      // Scripts: allow local and common CDNs
-      "script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      // Styles: allow inline for Bootstrap components and CDNs
+      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
+      "script-src-attr 'unsafe-inline' 'unsafe-hashes'",
       "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      // Images: self, data URIs, Unsplash, and CDNs
       "img-src 'self' data: blob: https://images.unsplash.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      // XHR/fetch connections
       "connect-src 'self'",
-      // Fonts: allow data and CDNs used by font providers
       "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.gstatic.com",
-      // Allow inline event handlers where needed
-      "script-src-attr 'unsafe-inline'",
+      "frame-ancestors 'self'",
     ].join("; ")
   );
   next();
