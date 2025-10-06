@@ -9,7 +9,28 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+//addition
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      // Scripts: allow local and common CDNs
+      "script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
+      // Styles: allow inline for Bootstrap components and CDNs
+      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
+      // Images: self, data URIs, Unsplash, and CDNs
+      "img-src 'self' data: blob: https://images.unsplash.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
+      // XHR/fetch connections
+      "connect-src 'self'",
+      // Fonts: allow data and CDNs used by font providers
+      "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.gstatic.com",
+      // Allow inline event handlers where needed
+      "script-src-attr 'unsafe-inline'",
+    ].join("; ")
+  );
+  next();
+});
 // Security middleware
 app.use(helmet());
 app.use(compression());
