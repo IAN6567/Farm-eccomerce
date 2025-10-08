@@ -19,15 +19,21 @@ app.use((req, res, next) => {
       "script-src-attr 'unsafe-inline' 'unsafe-hashes'",
       "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
       "img-src 'self' data: blob: https://images.unsplash.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      "connect-src 'self'",
+      "connect-src 'self' https://cdn.jsdelivr.net http://localhost:3000 http://localhost:5173",
       "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.gstatic.com",
+      "form-action 'self' http://localhost:3000",
+      "base-uri 'self'",
       "frame-ancestors 'self'",
     ].join("; ")
   );
   next();
 });
 // Security middleware
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(compression());
 
 // Rate limiting for API protection

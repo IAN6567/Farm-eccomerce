@@ -65,6 +65,14 @@ function showUserMenu() {
   document.getElementById("authButtons").style.display = "none";
   document.getElementById("userMenu").style.display = "block";
   document.getElementById("userName").textContent = currentUser.firstName;
+  // Collapse mobile navbar if open
+  const navbarCollapse = document.getElementById("navbarNav");
+  if (navbarCollapse && typeof bootstrap !== "undefined") {
+    const instance =
+      bootstrap.Collapse.getInstance(navbarCollapse) ||
+      new bootstrap.Collapse(navbarCollapse, { toggle: false });
+    instance.hide();
+  }
 }
 
 // Setup event listeners
