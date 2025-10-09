@@ -19,7 +19,7 @@ app.use((req, res, next) => {
       "script-src-attr 'unsafe-inline' 'unsafe-hashes'",
       "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
       "img-src 'self' data: blob: https://images.unsplash.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      "connect-src 'self' https://cdn.jsdelivr.net http://localhost:3000 http://localhost:5173",
+      "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://images.unsplash.com http://localhost:3000 http://localhost:5173",
       "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.gstatic.com",
       "form-action 'self' http://localhost:3000",
       "base-uri 'self'",
@@ -58,6 +58,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Static files
 app.use(express.static("public"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Serve main HTML file
 app.get("/", (req, res) => {
