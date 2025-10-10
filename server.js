@@ -9,29 +9,72 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-//addition
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      "script-src-attr 'unsafe-inline' 'unsafe-hashes'",
-      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      "img-src 'self' data: blob: https://images.unsplash.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://images.unsplash.com http://localhost:3000 http://localhost:5173",
-      "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.gstatic.com",
-      "form-action 'self' http://localhost:3000",
-      "base-uri 'self'",
-      "frame-ancestors 'self'",
-    ].join("; ")
-  );
-  next();
-});
 // Security middleware
+// Configure a precise Content Security Policy via Helmet instead of a manual header
+// Allows: jsDelivr & Cloudflare CDNs, Unsplash images, Google Fonts, and dev localhost origins.
+// Inline scripts/styles are temporarily allowed due to inline handlers and Bootstrap usage.
+const isProduction = process.env.NODE_ENV === "production";
+const cspDirectives = {
+  defaultSrc: ["'self'"],
+  baseUri: ["'self'"],
+  objectSrc: ["'none'"],
+  frameAncestors: ["'self'"],
+  scriptSrc: [
+    "'self'",
+    "'unsafe-inline'",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+  ],
+  scriptSrcAttr: ["'unsafe-inline'"],
+  styleSrc: [
+    "'self'",
+    "'unsafe-inline'",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+  ],
+  imgSrc: [
+    "'self'",
+    "data:",
+    "blob:",
+    "https://images.unsplash.com",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+  ],
+  connectSrc: [
+    "'self'",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+    "https://images.unsplash.com",
+  ],
+  fontSrc: [
+    "'self'",
+    "data:",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+    "https://fonts.gstatic.com",
+  ],
+  formAction: ["'self'"],
+  workerSrc: ["'self'", "blob:"],
+  manifestSrc: ["'self'"],
+};
+
+// Allow localhost origins during development for convenience
+if (!isProduction) {
+  cspDirectives.connectSrc.push(
+    "http://localhost:3000",
+    "http://localhost:5173"
+  );
+  cspDirectives.formAction.push("http://localhost:3000");
+}
+
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: cspDirectives,
+    },
+    // Disable COEP to avoid cross-origin isolation issues with third-party assets
+    crossOriginEmbedderPolicy: false,
   })
 );
 app.use(compression());
