@@ -9,29 +9,62 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-//addition
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      "script-src-attr 'unsafe-inline' 'unsafe-hashes'",
-      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      "img-src 'self' data: blob: https://images.unsplash.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-      "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://images.unsplash.com http://localhost:3000 http://localhost:5173",
-      "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.gstatic.com",
-      "form-action 'self' http://localhost:3000",
-      "base-uri 'self'",
-      "frame-ancestors 'self'",
-    ].join("; ")
-  );
-  next();
-});
-// Security middleware
+
+// Security middleware (CSP and other headers)
+const isProduction = process.env.NODE_ENV === "production";
+const cspDirectives = {
+  "default-src": ["'self'"],
+  "base-uri": ["'self'"],
+  "object-src": ["'none'"],
+  "frame-ancestors": ["'self'"],
+  "form-action": ["'self'"],
+  // Allow API calls and SW caching to these hosts
+  "connect-src": [
+    "'self'",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+    "https://images.unsplash.com",
+    "http://localhost:3000",
+    "http://localhost:5173",
+  ],
+  // Permit HTTPS images broadly plus data/blob for inline/generated images
+  "img-src": ["'self'", "data:", "blob:", "https:"],
+  // Keep inline due to existing inline handlers and small inline script
+  "script-src": [
+    "'self'",
+    "'unsafe-inline'",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+  ],
+  "script-src-attr": ["'unsafe-inline'"],
+  "style-src": [
+    "'self'",
+    "'unsafe-inline'",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+  ],
+  "font-src": [
+    "'self'",
+    "data:",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+    "https://fonts.gstatic.com",
+  ],
+  "worker-src": ["'self'"],
+  "manifest-src": ["'self'"],
+};
+
+if (isProduction) {
+  // Upgrade HTTP resources automatically in production
+  cspDirectives["upgrade-insecure-requests"] = [];
+}
+
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: cspDirectives,
+    },
   })
 );
 app.use(compression());

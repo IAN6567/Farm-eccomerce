@@ -104,6 +104,25 @@ function setupEventListeners() {
         searchProducts();
       }
     });
+
+  // Collapse navbar on nav link click (mobile UX)
+  const navLinks = document.querySelectorAll(".nav-scroll");
+  const navbarToggler = document.querySelector(".navbar-toggler");
+  const navbarCollapse = document.getElementById("navbarNav");
+  navLinks.forEach((link) =>
+    link.addEventListener("click", () => {
+      if (
+        navbarToggler &&
+        getComputedStyle(navbarToggler).display !== "none" &&
+        typeof bootstrap !== "undefined"
+      ) {
+        const instance =
+          bootstrap.Collapse.getInstance(navbarCollapse) ||
+          new bootstrap.Collapse(navbarCollapse, { toggle: false });
+        instance.hide();
+      }
+    })
+  );
 }
 
 // Handle login
